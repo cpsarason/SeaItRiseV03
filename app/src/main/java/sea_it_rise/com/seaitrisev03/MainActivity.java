@@ -16,9 +16,19 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.style.layers.RasterLayer;
 import com.mapbox.mapboxsdk.style.sources.RasterSource;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
+import com.mapbox.mapboxsdk.style.layers.Layer;
+import com.mapbox.mapboxsdk.style.sources.VectorSource;
+
+import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
+import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
+
 
 public class MainActivity extends AppCompatActivity {
     private MapView mapView;
+    private MapboxMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
-
+                map = mapboxMap;
                 RasterSource webMapSource = new RasterSource(
                         "web-map-source",
                         new TileSet("tileset", "https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}"), 256);
@@ -52,9 +62,10 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
                 //mapView = (MapView) findViewById(R.id.mapViewSeattle);
+                toggleLayer();
             }
         });
     }
@@ -122,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         mapView.onSaveInstanceState(outState);
     }
 
-/*    private void toggleLayer() {
-        Layer layer = map.getLayer("museums");
+    private void toggleLayer() {
+        Layer layer = map.getLayer("web-map-layer");
         if (layer != null) {
             if (VISIBLE.equals(layer.getVisibility().getValue())) {
                 layer.setProperties(visibility(NONE));
@@ -131,6 +142,6 @@ public class MainActivity extends AppCompatActivity {
                 layer.setProperties(visibility(VISIBLE));
             }
         }
-    }*/
+    }
 
 }
