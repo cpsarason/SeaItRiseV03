@@ -38,7 +38,10 @@
         app:mapbox_styleUrl="mapbox://styles/mapbox/light-v9"
         app:mapbox_cameraZoom="11"/>
 
-    <include layout="@layout/content_main" />
+    <include
+        layout="@layout/content_main"
+        app:layout_anchor="@+id/fab2"
+        app:layout_anchorGravity="bottom|center" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -46,6 +49,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@android:drawable/ic_dialog_map" />
+
+<!--    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="138dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="2dp"
+        app:layout_anchor="@+id/mapView"
+        app:layout_anchorGravity="left|bottom"
+        app:srcCompat="@android:drawable/ic_dialog_map"
+        tools:layout_editor_absoluteX="218dp"
+        tools:layout_editor_absoluteY="413dp" />-->
 
 </android.support.design.widget.CoordinatorLayout>
