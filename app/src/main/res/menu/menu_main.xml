@@ -3,8 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="sea_it_rise.com.seaitrisev03.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/menu_noaa_conf_3ft"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="NOAA 3ft SLR Confidence"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_noaa_slr_3ft"
+        android:orderInCategory="100"
+        android:title="NOAA 3ft SLR Depth"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_noaa_conf_6ft"
+        android:orderInCategory="100"
+        android:title="NOAA 6ft SLR Confidence"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_noaa_slr_6ft"
+        android:orderInCategory="100"
+        android:title="NOAA 6ft SLR Depth"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_satellite"
+        android:orderInCategory="100"
+        android:title="@string/menu_map_style_satellite"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_satellite_streets"
+        android:orderInCategory="100"
+        android:title="@string/menu_map_style_satellite_streets"
         app:showAsAction="never" />
 </menu>
