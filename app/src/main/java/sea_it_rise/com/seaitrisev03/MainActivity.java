@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private RasterLayer noaaSLRLayer3;
     private RasterLayer noaaConfLayer6;
     private RasterLayer noaaSLRLayer6;
+    private int menu_noaa_conf_3ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 mapboxMap.addLayerBelow(noaaSLRLayer3,"aeroway-taxiway");
                 mapboxMap.addLayerBelow(noaaSLRLayer6, "aeroway-taxiway");
 
+                //mapboxMap.getMy
+
             }
         });
 
@@ -163,29 +166,37 @@ public class MainActivity extends AppCompatActivity {
 
                 if (VISIBLE.equals(noaaConfLayer3.getVisibility().getValue())) {
                     noaaConfLayer3.setProperties(visibility(NONE));
+                    item.setChecked(false);
                 } else {
                     noaaConfLayer3.setProperties(visibility(VISIBLE));
+                    item.setChecked(true);
                 }
                 return true;
             case R.id.menu_noaa_slr_3ft:
                 if (VISIBLE.equals(noaaSLRLayer3.getVisibility().getValue())) {
                     noaaSLRLayer3.setProperties(visibility(NONE));
+                    item.setChecked(false);
                 } else {
                     noaaSLRLayer3.setProperties(visibility(VISIBLE));
+                    item.setChecked(true);
                 }
                 return true;
             case R.id.menu_noaa_conf_6ft:
                 if (VISIBLE.equals(noaaConfLayer6.getVisibility().getValue())) {
                     noaaConfLayer6.setProperties(visibility(NONE));
+                    item.setChecked(false);
                 } else {
                     noaaConfLayer6.setProperties(visibility(VISIBLE));
+                    item.setChecked(true);
                 }
                 return true;
             case R.id.menu_noaa_slr_6ft:
                 if (VISIBLE.equals(noaaSLRLayer6.getVisibility().getValue())) {
                     noaaSLRLayer6.setProperties(visibility(NONE));
+                    item.setChecked(false);
                 } else {
                     noaaSLRLayer6.setProperties(visibility(VISIBLE));
+                    item.setChecked(true);
                 }
                 return true;
             case R.id.menu_satellite:

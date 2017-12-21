@@ -4,24 +4,30 @@
     tools:context="sea_it_rise.com.seaitrisev03.MainActivity">
     <item
         android:id="@+id/menu_noaa_conf_3ft"
+        android:checkable="true"
+        android:choiceMode="none"
         android:orderInCategory="100"
         android:title="NOAA 3ft SLR Confidence"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_noaa_slr_3ft"
+        android:checkable="true"
         android:orderInCategory="100"
         android:title="NOAA 3ft SLR Depth"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_noaa_conf_6ft"
+        android:checkable="true"
         android:orderInCategory="100"
         android:title="NOAA 6ft SLR Confidence"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_noaa_slr_6ft"
+        android:checkable="true"
+        android:checked="false"
         android:orderInCategory="100"
         android:title="NOAA 6ft SLR Depth"
         app:showAsAction="never" />
