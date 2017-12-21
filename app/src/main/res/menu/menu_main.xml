@@ -26,7 +26,7 @@
         android:title="NOAA 6ft SLR Depth"
         app:showAsAction="never" />
 
-    <item
+ <!--   <item
         android:id="@+id/menu_satellite"
         android:orderInCategory="100"
         android:title="@string/menu_map_style_satellite"
@@ -35,5 +35,5 @@
         android:id="@+id/menu_satellite_streets"
         android:orderInCategory="100"
         android:title="@string/menu_map_style_satellite_streets"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
 </menu>

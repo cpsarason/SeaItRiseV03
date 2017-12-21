@@ -22,6 +22,16 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.mapboxsdk.constants.Style;
 
+/*import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.services.android.location.LostLocationEngine;
+import com.mapbox.services.android.telemetry.location.LocationEngine;
+import com.mapbox.services.android.telemetry.location.LocationEngineListener;
+import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
+import com.mapbox.services.android.telemetry.permissions.PermissionsListener;
+import com.mapbox.services.android.telemetry.permissions.PermissionsManager;*/
+
+
 import java.sql.Array;
 import java.util.List;
 
@@ -58,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
-                map = mapboxMap;
+                //map = mapboxMap;
                 RasterSource noaaConfSource3 = new RasterSource(
                         "noaa-3ft-conf-source",
                         new TileSet("tileset", "https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}"), 256);
@@ -72,14 +82,15 @@ public class MainActivity extends AppCompatActivity {
                         "noaa-6ft-slr-source",
                         new TileSet("tileset", "https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/slr_6ft/MapServer/tile/{z}/{y}/{x}"), 256);
 
-                map.addSource(noaaConfSource3);
-                map.addSource(noaaSLRSource3);
-                map.addSource(noaaConfSource6);
-                map.addSource(noaaSLRSource6);
+                mapboxMap.addSource(noaaConfSource3);
+                mapboxMap.addSource(noaaSLRSource3);
+                mapboxMap.addSource(noaaConfSource6);
+                mapboxMap.addSource(noaaSLRSource6);
 
                 // Add the 3ft conf map source to the map.
                 noaaConfLayer3 = new RasterLayer("noaa-layer-3-conf","noaa-3ft-conf-source");
-                noaaConfLayer3.setProperties( rasterOpacity((float)0.5) );
+                noaaConfLayer3.setProperties( rasterOpacity((float)0.5),
+                        visibility(NONE) );
 
                 // Add the 6ft conf web map source to the map.
                 noaaConfLayer6 = new RasterLayer("noaa-layer-6-conf","noaa-6ft-conf-source");
@@ -95,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
                 noaaSLRLayer6.setProperties( rasterOpacity((float)0.5),
                         visibility(NONE));
 
-                map.addLayerBelow(noaaConfLayer3,"aeroway-taxiway");
-                map.addLayerBelow(noaaConfLayer6, "aeroway-taxiway");
-                map.addLayerBelow(noaaSLRLayer3,"aeroway-taxiway");
-                map.addLayerBelow(noaaSLRLayer6, "aeroway-taxiway");
+                mapboxMap.addLayerBelow(noaaConfLayer3,"aeroway-taxiway");
+                mapboxMap.addLayerBelow(noaaConfLayer6, "aeroway-taxiway");
+                mapboxMap.addLayerBelow(noaaSLRLayer3,"aeroway-taxiway");
+                mapboxMap.addLayerBelow(noaaSLRLayer6, "aeroway-taxiway");
 
             }
         });
@@ -233,14 +244,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void toggleLayer() {
-        Layer layer = map.getLayer("noaa-layer-3");
+        //return true;
+        /*Layer layer = mapboxMap.getLayer("noaa-layer-3");
         if (layer != null) {
             if (VISIBLE.equals(layer.getVisibility().getValue())) {
                 layer.setProperties(visibility(NONE));
             } else {
                 layer.setProperties(visibility(VISIBLE));
             }
-        }
+        }*/
     }
 
 }
