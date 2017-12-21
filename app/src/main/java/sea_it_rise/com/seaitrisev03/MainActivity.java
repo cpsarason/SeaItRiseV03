@@ -122,10 +122,10 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
+                Snackbar.make(view, "GeoLocation coming here soon", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
                 //mapView = (MapView) findViewById(R.id.mapViewSeattle);
-                toggleLayer();
+                //toggleLayer();
             }
         });
        /* FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
