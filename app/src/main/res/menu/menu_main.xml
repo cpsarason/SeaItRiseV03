@@ -6,6 +6,7 @@
         android:id="@+id/menu_noaa_conf_3ft"
         android:checkable="true"
         android:choiceMode="none"
+        android:checked="true"
         android:orderInCategory="100"
         android:title="NOAA 3ft SLR Confidence"
         app:showAsAction="never" />
@@ -31,6 +32,19 @@
         android:orderInCategory="100"
         android:title="NOAA 6ft SLR Depth"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_noaa_layer_attribution"
+        android:orderInCategory="100"
+
+        android:title="Data from NOAA Coastal Management"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_overlay"
+        android:orderInCategory="100"
+
+        android:title="Data Layers"
+        app:showAsAction="always" />
 
  <!--   <item
         android:id="@+id/menu_satellite"

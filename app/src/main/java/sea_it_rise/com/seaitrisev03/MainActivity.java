@@ -1,15 +1,18 @@
 package sea_it_rise.com.seaitrisev03;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.util.Log;
-
+import android.location.Location;
+import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -22,14 +25,17 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.mapboxsdk.constants.Style;
 
-/*import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.services.android.location.LostLocationEngine;
+import com.mapbox.services.android.telemetry.location.LostLocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener;
-import com.mapbox.services.android.telemetry.permissions.PermissionsManager;*/
+import com.mapbox.services.android.telemetry.permissions.PermissionsManager;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 
 import java.sql.Array;
@@ -43,7 +49,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.rasterOpacity;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationEngineListener,PermissionsListener {
     private MapView mapView;
     private MapboxMap map;
     private List layerList;
@@ -55,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
     private RasterLayer noaaSLRLayer6;
     private int menu_noaa_conf_3ft;
 
+    //location layer stuff
+    private PermissionsManager permissionsManager;
+    private LocationLayerPlugin locationPlugin;
+    private LocationEngine locationEngine;
+    private Location originLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,13 +75,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // mapbox stuff
         mapView = (MapView) findViewById(R.id.mapView);
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-                //map = mapboxMap;
+            public void onMapReady(final MapboxMap mapboxMap) {
+                map = mapboxMap;
                 RasterSource noaaConfSource3 = new RasterSource(
                         "noaa-3ft-conf-source",
                         new TileSet("tileset", "https://www.coast.noaa.gov/arcgis/rest/services/dc_slr/conf_3ft/MapServer/tile/{z}/{y}/{x}"), 256);
@@ -91,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 // Add the 3ft conf map source to the map.
                 noaaConfLayer3 = new RasterLayer("noaa-layer-3-conf","noaa-3ft-conf-source");
                 noaaConfLayer3.setProperties( rasterOpacity((float)0.5),
-                        visibility(NONE) );
+                        visibility(VISIBLE) );
 
                 // Add the 6ft conf web map source to the map.
                 noaaConfLayer6 = new RasterLayer("noaa-layer-6-conf","noaa-6ft-conf-source");
@@ -112,22 +126,39 @@ public class MainActivity extends AppCompatActivity {
                 mapboxMap.addLayerBelow(noaaSLRLayer3,"aeroway-taxiway");
                 mapboxMap.addLayerBelow(noaaSLRLayer6, "aeroway-taxiway");
 
-                //mapboxMap.getMy
+                //MainActivity.this.map = mapboxMap;
+                enableLocationPlugin();
 
             }
         });
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton homing_beacon_button = (FloatingActionButton) findViewById(R.id.homing_beacon_button);
+        FloatingActionButton photo_marker_button = (FloatingActionButton) findViewById(R.id.photo_marker_button);
+
+        // TODO: Add geolocation "find me" to this button
+        homing_beacon_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "GeoLocation coming here soon", Snackbar.LENGTH_LONG)
+                Location lastLocation = locationEngine.getLastLocation();
+
+                // When user clicks the homing button, re-center on current location
+                setCameraPosition(lastLocation);
+            }
+        });
+
+        // TODO: Add marker overlay toggle to this button
+        photo_marker_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Flickr and Sea It Rise photos coming soon! Available at www.sea-it-rise.com", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 //mapView = (MapView) findViewById(R.id.mapViewSeattle);
                 //toggleLayer();
             }
         });
+
+
        /* FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,12 +171,82 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
+
+    // functions from Location Layer example
+    @SuppressWarnings( {"MissingPermission"})
+    private void enableLocationPlugin() {
+        // Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            // Create an instance of LOST location engine
+            initializeLocationEngine();
+            locationPlugin = new LocationLayerPlugin(mapView, map, locationEngine);
+            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+        } else {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
+    }
+
+    @SuppressWarnings( {"MissingPermission"})
+    private void initializeLocationEngine() {
+        locationEngine = new LostLocationEngine(MainActivity.this);
+        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
+        locationEngine.activate();
+
+        Location lastLocation = locationEngine.getLastLocation();
+        if (lastLocation != null) {
+            setCameraPosition(lastLocation);
+        } else {
+            locationEngine.addLocationEngineListener(this);
+        }
+    }
+
+    private void setCameraPosition(Location location) {
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(location.getLatitude(), location.getLongitude()), 13));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted) {
+        if (granted) {
+            enableLocationPlugin();
+        } else {
+            Toast.makeText(this, "You didn't grant location permissions.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+    @Override
+    @SuppressWarnings( {"MissingPermission"})
+    public void onConnected() {
+        locationEngine.requestLocationUpdates();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            setCameraPosition(location);
+            locationEngine.removeLocationEngineListener(this);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -199,12 +300,13 @@ public class MainActivity extends AppCompatActivity {
                     item.setChecked(true);
                 }
                 return true;
-            case R.id.menu_satellite:
-                //map.setStyleUrl(Style.SATELLITE);
+
+            case R.id.menu_noaa_layer_attribution:
                 return true;
-            case R.id.menu_satellite_streets:
+
+            /*case R.id.menu_satellite_streets:
                 //map.setStyleUrl(Style.SATELLITE_STREETS);
-                return true;
+                return true;*/
             case android.R.id.home:
                 finish();
                 return true;
@@ -215,6 +317,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        if (locationEngine != null) {
+            locationEngine.requestLocationUpdates();
+        }
+        if (locationPlugin != null) {
+            locationPlugin.onStart();
+        }
         mapView.onStart();
     }
 
@@ -233,6 +341,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates();
+        }
+        if (locationPlugin != null) {
+            locationPlugin.onStop();
+        }
         mapView.onStop();
     }
 
@@ -246,6 +360,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        if (locationEngine != null) {
+            locationEngine.deactivate();
+        }
     }
 
     @Override

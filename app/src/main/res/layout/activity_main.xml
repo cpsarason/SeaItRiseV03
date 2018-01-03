@@ -38,22 +38,45 @@
         app:mapbox_styleUrl="mapbox://styles/mapbox/light-v9"
         app:mapbox_cameraZoom="11"
         app:mapbox_uiZoomControls="true"
-        app:mapbox_uiCompass="true"/>
+        app:mapbox_uiCompass="true"
+
+        />
 
     <include
+        android:id="@+id/include"
         layout="@layout/content_main"
         app:layout_anchor="@+id/fab2"
         app:layout_anchorGravity="bottom|center" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/homing_beacon_button"
         android:layout_width="wrap_content"
         android:layout_height="38dp"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_bottom_margin"
+        android:layout_marginRight="@dimen/fab_side_margin"
+        android:scaleType="center"
+        app:fabSize="normal"
         app:backgroundTint="@color/colorPrimary"
-        app:srcCompat="@android:drawable/ic_dialog_map"
+        app:srcCompat="@android:drawable/ic_menu_mylocation"
         tools:layout_editor_absoluteY="513dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/photo_marker_button"
+        android:layout_width="40dp"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_second_button_bottom_margin"
+        android:layout_marginRight="@dimen/fab_side_margin"
+        android:scaleType="center"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:layout_anchor="@+id/mapView"
+        app:layout_anchorGravity="right|bottom"
+        app:srcCompat="@android:drawable/ic_menu_gallery"
+        tools:layout_editor_absoluteX="328dp"
+        tools:layout_editor_absoluteY="452dp" />
+
 
 <!--    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab2"
