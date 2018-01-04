@@ -15,6 +15,8 @@ import android.location.Location;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.constants.MyBearingTracking;
+import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -25,6 +27,8 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.sources.VectorSource;
 import com.mapbox.mapboxsdk.constants.Style;
 
+
+import com.mapbox.mapboxsdk.plugins.locationlayer.CompassListener;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.services.android.telemetry.location.LostLocationEngine;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
     private LocationLayerPlugin locationPlugin;
     private LocationEngine locationEngine;
     private Location originLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
                 mapboxMap.addLayerBelow(noaaSLRLayer3,"aeroway-taxiway");
                 mapboxMap.addLayerBelow(noaaSLRLayer6, "aeroway-taxiway");
 
-                //MainActivity.this.map = mapboxMap;
+                //mapboxMap.getUiSettings().setCompassEnabled(true);
+
                 enableLocationPlugin();
 
             }
@@ -142,8 +148,11 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
             public void onClick(View view) {
                 Location lastLocation = locationEngine.getLastLocation();
 
+                //lastLocation.set
+
                 // When user clicks the homing button, re-center on current location
                 setCameraPosition(lastLocation);
+
             }
         });
 
@@ -180,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
             // Create an instance of LOST location engine
             initializeLocationEngine();
             locationPlugin = new LocationLayerPlugin(mapView, map, locationEngine);
-            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            locationPlugin.setLocationLayerEnabled(LocationLayerMode.COMPASS);
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -202,8 +211,16 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
     }
 
     private void setCameraPosition(Location location) {
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLatitude(), location.getLongitude()), 13));
+        CameraPosition position = new CameraPosition.Builder()
+                .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
+                .zoom(13) // Sets the zoom
+                .bearing(0) // Rotate the camera
+                .build(); // Creates a CameraPosition from the builder
+
+        map.animateCamera(CameraUpdateFactory
+                .newCameraPosition(position), 700);
+        //map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+        //        new LatLng(location.getLatitude(), location.getLongitude()), 13));
     }
 
     @Override

@@ -38,7 +38,10 @@
         app:mapbox_styleUrl="mapbox://styles/mapbox/light-v9"
         app:mapbox_cameraZoom="11"
         app:mapbox_uiZoomControls="true"
+        app:mapbox_uiRotateGestures="true"
         app:mapbox_uiCompass="true"
+        app:mapbox_uiCompassGravity="left"
+        app:mapbox_uiCompassFadeFacingNorth="false"
 
         />
 
