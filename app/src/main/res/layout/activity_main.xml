@@ -40,9 +40,7 @@
         app:mapbox_uiZoomControls="true"
         app:mapbox_uiRotateGestures="true"
         app:mapbox_uiCompass="true"
-        app:mapbox_uiCompassGravity="left"
         app:mapbox_uiCompassFadeFacingNorth="false"
-
         />
 
     <include
@@ -57,7 +55,7 @@
         android:layout_height="38dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_bottom_margin"
-        android:layout_marginRight="@dimen/fab_side_margin"
+        android:layout_marginEnd="@dimen/fab_side_margin"
         android:scaleType="center"
         app:fabSize="normal"
         app:backgroundTint="@color/colorPrimary"
@@ -70,7 +68,7 @@
         android:layout_height="45dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_second_button_bottom_margin"
-        android:layout_marginRight="@dimen/fab_side_margin"
+        android:layout_marginEnd="@dimen/fab_side_margin"
         android:scaleType="center"
         app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"

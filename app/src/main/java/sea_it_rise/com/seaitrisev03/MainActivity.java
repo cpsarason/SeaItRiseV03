@@ -19,7 +19,9 @@ import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
+
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.UiSettings;
 import com.mapbox.mapboxsdk.style.layers.RasterLayer;
 import com.mapbox.mapboxsdk.style.sources.RasterSource;
 import com.mapbox.mapboxsdk.style.sources.TileSet;
@@ -56,6 +58,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 public class MainActivity extends AppCompatActivity implements LocationEngineListener,PermissionsListener {
     private MapView mapView;
     private MapboxMap map;
+
     private List layerList;
     private String layerString;
 
@@ -71,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
     private LocationEngine locationEngine;
     private Location originLocation;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
 
         // mapbox stuff
         mapView = (MapView) findViewById(R.id.mapView);
+
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
@@ -151,7 +154,12 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
                 //lastLocation.set
 
                 // When user clicks the homing button, re-center on current location
-                setCameraPosition(lastLocation);
+                if (lastLocation != null) {
+                    setCameraPosition(lastLocation);
+                } else {
+                    Snackbar.make(view, "I am Here button not working. Did you enable Location services?", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
 
             }
         });
@@ -213,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements LocationEngineLis
     private void setCameraPosition(Location location) {
         CameraPosition position = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
-                .zoom(13) // Sets the zoom
+                .zoom(17) // Sets the zoom
                 .bearing(0) // Rotate the camera
                 .build(); // Creates a CameraPosition from the builder
 
